@@ -37,10 +37,15 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",  # Next.js dev
+        "http://localhost:3001",
         "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
         "http://192.168.0.104:3000",  # Local network dev
+        "http://192.168.0.104:3001",
         "localhost:3000",
+        "localhost:3001",
         "127.0.0.1:3000",
+        "127.0.0.1:3001",
         "*",  # Allow all origins in dev (since we're local)
     ],
     allow_credentials=True,
