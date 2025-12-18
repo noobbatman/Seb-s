@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from typing import List
 from uuid import UUID
 
@@ -179,6 +180,7 @@ async def get_my_interactions(
 ):
     """Get current user's interactions with optional filters."""
     query = select(UserInteraction).where(UserInteraction.user_id == user_id)
+    query = query.options(selectinload(UserInteraction.media))
     
     if interaction_type:
         query = query.where(UserInteraction.interaction_type == interaction_type)
@@ -208,6 +210,7 @@ async def get_user_top4(
             UserInteraction.interaction_type == "top4"
         )
     )
+    query = query.options(selectinload(UserInteraction.media))
     
     if media_type:
         query = query.where(MediaItem.media_type == media_type)

@@ -20,6 +20,18 @@ from app.services import tmdb_service, spotify_service, update_user_vibe_vector
 router = APIRouter(prefix="/media", tags=["Media"])
 
 
+# ============ Debug Endpoints ============
+
+@router.get("/debug/spotify-test")
+async def test_spotify_credentials(_: str = Depends(get_current_user_id)):
+    """Test Spotify credentials."""
+    try:
+        token = await spotify_service._get_client_credentials_token()
+        return {"status": "success", "token_length": len(token)}
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
 # ============ Search Endpoints ============
 
 @router.get("/search/movies", response_model=List[MovieSearchResult])
@@ -47,6 +59,9 @@ async def search_artists(
         results = await spotify_service.search_artists(q, limit)
         return results
     except Exception as e:
+        import traceback
+        print(f"Artist search error: {str(e)}")
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Spotify API error: {str(e)}")
 
 

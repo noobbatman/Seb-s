@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Star, Music, Film, X, Plus } from 'lucide-react';
@@ -43,6 +44,7 @@ export function MediaCard({
   };
 
   const isMusic = media.media_type === 'artist' || media.media_type === 'track' || media.media_type === 'album';
+  const [imageError, setImageError] = useState(false);
 
   return (
     <motion.div
@@ -60,12 +62,16 @@ export function MediaCard({
       )}
     >
       {/* Image */}
-      {media.image_url ? (
+      {media.image_url && !imageError ? (
         <Image
           src={media.image_url}
           alt={media.title}
           fill
+          sizes="(max-width: 640px) 96px, (max-width: 1024px) 128px, 160px"
+          loading="eager"
+          unoptimized
           className="object-cover"
+          onError={() => setImageError(true)}
         />
       ) : (
         <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
