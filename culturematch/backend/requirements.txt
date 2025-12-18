@@ -28,6 +28,7 @@ spotipy==2.23.0
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.2.0+cpu
 sentence-transformers==2.6.1
+numpy==1.26.4
 
 # Utilities
 python-dotenv==1.0.0

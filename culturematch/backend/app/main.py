@@ -32,20 +32,23 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# GZip compression for responses
-app.add_middleware(GZipMiddleware, minimum_size=1000)
-
-# CORS configuration
+# CORS configuration - MUST be before other middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",  # Next.js dev
         "http://127.0.0.1:3000",
+        "localhost:3000",
+        "127.0.0.1:3000",
+        "*",  # Allow all origins in dev (since we're local)
     ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# GZip compression for responses
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 # Include API routes
 app.include_router(api_router)

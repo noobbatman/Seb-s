@@ -115,8 +115,9 @@ export function MediaSearch({ mediaType, onSelect, placeholder, className }: Med
                       key={item.id}
                       media={{
                         ...item,
+                        title: item.title || item.name || 'Unknown',
                         media_type: mediaType,
-                      }}
+                      } as any}
                       size="sm"
                       showActions={false}
                       onClick={() => handleSelect(item)}

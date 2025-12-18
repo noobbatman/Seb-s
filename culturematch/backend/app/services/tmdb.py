@@ -32,10 +32,10 @@ class TMDBService:
             movies = []
             for movie in data.get("results", []):
                 movies.append({
-                    "id": movie["id"],
+                    "id": str(movie["id"]),
                     "title": movie["title"],
                     "overview": movie.get("overview"),
-                    "poster_path": f"{self.IMAGE_BASE_URL}{movie['poster_path']}" if movie.get("poster_path") else None,
+                    "image_url": f"{self.IMAGE_BASE_URL}{movie['poster_path']}" if movie.get("poster_path") else None,
                     "release_date": movie.get("release_date"),
                     "vote_average": movie.get("vote_average"),
                 })
@@ -55,10 +55,10 @@ class TMDBService:
             movie = response.json()
             
             return {
-                "id": movie["id"],
+                "id": str(movie["id"]),
                 "title": movie["title"],
                 "overview": movie.get("overview"),
-                "poster_path": f"{self.IMAGE_BASE_URL}{movie['poster_path']}" if movie.get("poster_path") else None,
+                "image_url": f"{self.IMAGE_BASE_URL}{movie['poster_path']}" if movie.get("poster_path") else None,
                 "release_date": movie.get("release_date"),
                 "vote_average": movie.get("vote_average"),
                 "genres": [g["name"] for g in movie.get("genres", [])],
@@ -79,9 +79,9 @@ class TMDBService:
             movies = []
             for movie in data.get("results", [])[:10]:
                 movies.append({
-                    "id": movie["id"],
+                    "id": str(movie["id"]),
                     "title": movie["title"],
-                    "poster_path": f"{self.IMAGE_BASE_URL}{movie['poster_path']}" if movie.get("poster_path") else None,
+                    "image_url": f"{self.IMAGE_BASE_URL}{movie['poster_path']}" if movie.get("poster_path") else None,
                     "vote_average": movie.get("vote_average"),
                 })
             

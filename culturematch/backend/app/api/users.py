@@ -170,6 +170,28 @@ async def get_user_profile(
     return user
 
 
+@router.get("/me/interactions", response_model=List[InteractionResponse])
+async def get_my_interactions(
+    interaction_type: str = Query(None, pattern="^(logged|top4|anthem|favorite)$"),
+    media_type: str = Query(None, pattern="^(movie|artist|track|album)$"),
+    db: AsyncSession = Depends(get_db),
+    user_id: str = Depends(get_current_user_id),
+):
+    """Get current user's interactions with optional filters."""
+    query = select(UserInteraction).where(UserInteraction.user_id == user_id)
+    
+    if interaction_type:
+        query = query.where(UserInteraction.interaction_type == interaction_type)
+    
+    if media_type:
+        query = query.join(MediaItem).where(MediaItem.media_type == media_type)
+    
+    result = await db.execute(query)
+    interactions = result.scalars().all()
+    
+    return interactions
+
+
 @router.get("/{user_id}/top4", response_model=List[InteractionResponse])
 async def get_user_top4(
     user_id: UUID,

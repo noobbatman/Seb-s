@@ -58,7 +58,7 @@ export default function ProfilePage() {
         media: {
           external_id: item.id,
           media_type: mediaType,
-          title: item.title,
+          title: item.title || item.name || 'Unknown',
           image_url: item.image_url || undefined,
         },
         interaction_type: 'top4',

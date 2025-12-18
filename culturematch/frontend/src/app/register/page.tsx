@@ -48,9 +48,10 @@ export default function RegisterPage() {
         password: formData.password,
         display_name: formData.displayName || undefined,
       });
-    } catch (err) {
-      setError('Registration failed. Email may already be in use.');
-      console.error(err);
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.detail || err.message || 'Registration failed';
+      setError(errorMsg);
+      console.error('Registration error:', err);
     } finally {
       setIsLoading(false);
     }

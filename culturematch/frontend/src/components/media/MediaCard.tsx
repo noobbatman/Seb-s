@@ -82,7 +82,7 @@ export function MediaCard({
 
       {/* Content */}
       <div className="absolute bottom-0 left-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <p className="text-white text-sm font-medium truncate">{media.title}</p>
+        <p className="text-white text-sm font-medium truncate">{(('title' in media && media.title) || ('name' in media && media.name) || 'Unknown') as string}</p>
         {'artist' in media && media.artist && (
           <p className="text-white/60 text-xs truncate">{media.artist}</p>
         )}

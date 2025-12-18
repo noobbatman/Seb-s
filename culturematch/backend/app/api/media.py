@@ -102,7 +102,7 @@ async def create_interaction(
             media_type=data.media.media_type,
             title=data.media.title,
             image_url=data.media.image_url,
-            metadata=data.media.metadata or {},
+            extra_data=data.media.extra_data or {},
         )
         db.add(media)
         await db.flush()  # Get the ID

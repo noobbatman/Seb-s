@@ -1,8 +1,7 @@
-from typing import List, Optional, cast
+from typing import List, Optional
 from sentence_transformers import SentenceTransformer
-import numpy as np
-from numpy.typing import NDArray
 from functools import lru_cache
+import numpy as np
 
 from app.core.config import get_settings
 
@@ -30,13 +29,13 @@ class VectorService:
     
     def generate_embedding(self, text: str) -> List[float]:
         """Generate embedding for a single text string."""
-        embedding = cast(NDArray[np.float32], self.model.encode(text, convert_to_numpy=True))
-        return embedding.tolist()
+        embedding = self.model.encode(text, convert_to_numpy=True)
+        return embedding.tolist()  # type: ignore[union-attr]
     
     def generate_embeddings(self, texts: List[str]) -> List[List[float]]:
         """Generate embeddings for multiple texts (batched for efficiency)."""
-        embeddings = cast(NDArray[np.float32], self.model.encode(texts, convert_to_numpy=True))
-        return embeddings.tolist()
+        embeddings = self.model.encode(texts, convert_to_numpy=True)
+        return embeddings.tolist()  # type: ignore[union-attr]
     
     def generate_user_vibe_vector(
         self,
@@ -88,32 +87,43 @@ class VectorService:
         # Map question IDs to descriptive text
         vibe_mappings = {
             "subtitles": {
-                "on": "Prefers watching foreign films with subtitles",
-                "off": "Prefers dubbed or native language films",
-            },
-            "concert_position": {
-                "mosh_pit": "Loves energetic mosh pits at concerts",
-                "balcony": "Prefers calm balcony seats at concerts",
-                "front_row": "Loves being front row at concerts",
-            },
-            "movie_length": {
-                "short": "Prefers shorter films under 2 hours",
-                "long": "Enjoys epic long films over 2.5 hours",
-                "any": "Open to any movie length",
+                "on": "Prefers watching films with subtitles",
+                "off": "Watches films without subtitles",
+                "foreign": "Watches foreign films with subtitles",
             },
             "music_discovery": {
                 "algorithm": "Discovers music through algorithms and playlists",
                 "friends": "Discovers music through friends recommendations",
-                "deep_dive": "Actively seeks out obscure and underground music",
+                "deep_dive": "Actively seeks out and discovers new music",
+                "radio": "Discovers music through radio and playlists",
             },
-            "rewatchability": {
-                "new_only": "Always wants to watch something new",
-                "comfort": "Loves rewatching comfort movies",
+            "movie_night": {
+                "theater": "Loves watching movies in the cinema",
+                "couch": "Enjoys cozy movie nights at home",
+                "outdoor": "Loves outdoor screenings and experiences",
+                "marathon": "Loves movie marathons",
             },
-            "live_music": {
-                "essential": "Live music is essential to life",
-                "occasional": "Occasionally enjoys live music",
-                "rare": "Rarely attends live music events",
+            "concert_vibe": {
+                "front": "Enjoys being at the front of concerts",
+                "middle": "Vibes in the middle section of concerts",
+                "back": "Prefers chilling in the back at concerts",
+                "vip": "Enjoys VIP concert experiences",
+            },
+            "genre_mood": {
+                "upbeat": "Loves upbeat pop and dance music",
+                "chill": "Enjoys lo-fi and chill music",
+                "intense": "Loves rock and metal music",
+                "nostalgic": "Enjoys throwback and classic music",
+            },
+            "rewatcher": {
+                "always": "Loves rewatching comfort movies",
+                "sometimes": "Rewatches really good movies",
+                "never": "Always wants to watch something new",
+            },
+            "soundtrack": {
+                "love": "Loves movie soundtracks",
+                "some": "Enjoys iconic soundtracks",
+                "skip": "Separates music from film experience",
             },
         }
         

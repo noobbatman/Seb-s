@@ -84,7 +84,7 @@ class MediaItemBase(BaseModel):
     media_type: str = Field(..., pattern="^(movie|artist|track|album)$")
     title: str
     image_url: Optional[str] = None
-    metadata: dict = {}
+    extra_data: Optional[dict] = None
 
 
 class MediaItemCreate(MediaItemBase):
@@ -138,6 +138,35 @@ class MatchResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+
+class MovieSearchResult(BaseModel):
+    """Movie search result from TMDB."""
+    id: str
+    title: str
+    image_url: Optional[str] = None
+    release_date: Optional[str] = None
+    overview: Optional[str] = None
+    vote_average: Optional[float] = None
+
+
+class ArtistSearchResult(BaseModel):
+    """Artist search result from Spotify."""
+    id: str
+    name: str
+    image_url: Optional[str] = None
+    genres: Optional[List[str]] = None
+    popularity: Optional[int] = None
+
+
+class TrackSearchResult(BaseModel):
+    """Track search result from Spotify."""
+    id: str
+    name: str
+    artist: Optional[str] = None
+    album: Optional[str] = None
+    image_url: Optional[str] = None
+    preview_url: Optional[str] = None
 
 
 class MatchAction(BaseModel):

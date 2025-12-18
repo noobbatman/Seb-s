@@ -71,13 +71,13 @@ export const usersApi = {
 // Media API
 export const mediaApi = {
   searchMovies: (query: string) =>
-    api.get('/media/movies/search', { params: { query } }),
+    api.get('/media/search/movies', { params: { q: query } }),
   
   searchArtists: (query: string) =>
-    api.get('/media/artists/search', { params: { query } }),
+    api.get('/media/search/artists', { params: { q: query } }),
   
   searchTracks: (query: string) =>
-    api.get('/media/tracks/search', { params: { query } }),
+    api.get('/media/search/tracks', { params: { q: query } }),
   
   getTrendingMovies: () => api.get('/media/movies/trending'),
   

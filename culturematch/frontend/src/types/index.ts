@@ -45,11 +45,17 @@ export interface MediaItem {
 
 export interface MediaSearchResult {
   id: string;
-  title: string;
+  title?: string;
+  name?: string;
   image_url: string | null;
   year?: number;
   artist?: string;
+  album?: string;
   genres?: string[];
+  release_date?: string;
+  overview?: string;
+  popularity?: number;
+  preview_url?: string;
 }
 
 export interface UserInteraction {

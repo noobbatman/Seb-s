@@ -58,20 +58,20 @@ class MatchingService:
         similarity_query = text("""
             SELECT 
                 id,
-                1 - (vibe_vector <=> :user_vector) as similarity
+                1 - (vibe_vector <=> :user_vector::vector) as similarity
             FROM users
             WHERE 
                 id != :user_id
                 AND id != ALL(:excluded_ids)
                 AND vibe_vector IS NOT NULL
-            ORDER BY vibe_vector <=> :user_vector
+            ORDER BY vibe_vector <=> :user_vector::vector
             LIMIT :limit
         """)
         
         result = await db.execute(
             similarity_query,
             {
-                "user_vector": str(user.vibe_vector),
+                "user_vector": str(list(user.vibe_vector)),
                 "user_id": str(user_id),
                 "excluded_ids": [str(uid) for uid in excluded_ids],
                 "limit": limit * 2,  # Fetch extra for filtering

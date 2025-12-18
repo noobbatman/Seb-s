@@ -84,6 +84,7 @@ export default function VibeCheckPage() {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<VibeAnswer[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const currentQuestion = VIBE_QUESTIONS[currentIndex];
   const isLastQuestion = currentIndex === VIBE_QUESTIONS.length - 1;
@@ -91,11 +92,21 @@ export default function VibeCheckPage() {
 
   const { mutate: submitVibeCheck, isPending } = useMutation({
     mutationFn: async (vibeAnswers: VibeAnswer[]) => {
-      const response = await usersApi.submitVibeCheck(vibeAnswers);
-      return response.data;
+      try {
+        const response = await usersApi.submitVibeCheck(vibeAnswers);
+        return response.data;
+      } catch (err: any) {
+        const errorMsg = err.response?.data?.detail || err.message || 'Failed to submit vibe check';
+        setError(errorMsg);
+        console.error('Vibe check error:', err);
+        throw err;
+      }
     },
     onSuccess: () => {
       router.push('/discover');
+    },
+    onError: (err) => {
+      console.error('Mutation error:', err);
     },
   });
 
@@ -121,7 +132,15 @@ export default function VibeCheckPage() {
     }, 300);
   };
 
-  const currentAnswer = answers.find((a) => a.question_id === currentQuestion.id)?.answer;
+  const currentAnswer = currentQuestion ? answers.find((a) => a.question_id === currentQuestion.id)?.answer : undefined;
+
+  if (!currentQuestion) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950/20 to-gray-950 p-6 flex items-center justify-center">
+        <p className="text-white/60">Loading questions...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-purple-950/20 to-gray-950 p-6">
@@ -185,6 +204,17 @@ export default function VibeCheckPage() {
             </div>
           </motion.div>
         </AnimatePresence>
+
+        {/* Error message */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-center text-sm"
+          >
+            {error}
+          </motion.div>
+        )}
 
         {/* Navigation */}
         <div className="flex justify-between mt-12">

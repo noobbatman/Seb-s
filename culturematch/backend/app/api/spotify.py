@@ -159,7 +159,7 @@ async def import_spotify_top_items(
                     media_type="artist",
                     title=artist["name"],
                     image_url=artist.get("image_url"),
-                    metadata={"genres": artist.get("genres", [])},
+                    extra_data={"genres": artist.get("genres", [])},
                 )
                 db.add(media)
                 await db.flush()
@@ -197,7 +197,7 @@ async def import_spotify_top_items(
                     media_type="artist",
                     title=artist["name"],
                     image_url=artist.get("image_url"),
-                    metadata={"genres": artist.get("genres", [])},
+                    extra_data={"genres": artist.get("genres", [])},
                 )
                 db.add(media)
                 await db.flush()

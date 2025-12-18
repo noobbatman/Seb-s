@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS media_items (
     media_type VARCHAR(20) NOT NULL CHECK (media_type IN ('movie', 'artist', 'track', 'album')),
     title VARCHAR(500) NOT NULL,
     image_url VARCHAR(500),
-    metadata JSONB DEFAULT '{}',  -- Genres, release year, etc.
+    extra_data JSONB DEFAULT '{}',  -- Genres, release year, etc.
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE(external_id, media_type)
 );
