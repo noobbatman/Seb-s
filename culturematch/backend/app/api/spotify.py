@@ -8,6 +8,7 @@ from sqlalchemy import select
 import httpx
 import base64
 from uuid import UUID
+from urllib.parse import urlencode
 
 from app.core import get_db, get_current_user_id, get_settings
 from app.models import User
@@ -40,7 +41,13 @@ async def spotify_connect(
         "show_dialog": "true",
     }
     
-    auth_url = f"{SPOTIFY_AUTH_URL}?" + "&".join(f"{k}={v}" for k, v in params.items())
+    # Use urlencode to properly encode all parameters
+    auth_url = f"{SPOTIFY_AUTH_URL}?" + urlencode(params)
+    
+    print(f"[DEBUG] Spotify Connect URL: {auth_url}")
+    print(f"[DEBUG] Client ID: {settings.spotify_client_id}")
+    print(f"[DEBUG] Redirect URI: {settings.spotify_redirect_uri}")
+    print(f"[DEBUG] Scope: {SCOPES}")
     
     return {"auth_url": auth_url}
 
@@ -99,9 +106,8 @@ async def spotify_callback(
     
     await db.commit()
     
-    # Redirect to frontend success page
-    # Using 127.0.0.1 to match your cookie domain setup
-    return RedirectResponse(url="http://127.0.0.1:3000/profile?spotify=connected")
+    # Redirect to frontend success page (using IP address where frontend is hosted)
+    return RedirectResponse(url="http://192.168.0.104:3001/profile?spotify=connected")
 
 
 @router.post("/import-top-items")

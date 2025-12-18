@@ -133,9 +133,9 @@ export const matchesApi = {
 
 // Spotify API
 export const spotifyApi = {
-  getAuthUrl: () => api.get('/spotify/auth-url'),
+  getAuthUrl: () => api.get('/spotify/connect'),
   
-  importTopItems: () => api.post('/spotify/import'),
+  importTopItems: () => api.post('/spotify/import-top-items'),
   
   getProfile: () => api.get('/spotify/profile'),
   

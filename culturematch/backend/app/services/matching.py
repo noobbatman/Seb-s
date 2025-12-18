@@ -53,36 +53,34 @@ class MatchingService:
                 excluded_ids.add(row.user_a_id)
                 excluded_ids.add(row.user_b_id)
         
-        # Pgvector cosine similarity search
-        # Using raw SQL for optimal pgvector performance
-        similarity_query = text("""
-            SELECT 
-                id,
-                1 - (vibe_vector <=> :user_vector::vector) as similarity
-            FROM users
-            WHERE 
-                id != :user_id
-                AND id != ALL(:excluded_ids)
-                AND vibe_vector IS NOT NULL
-            ORDER BY vibe_vector <=> :user_vector::vector
-            LIMIT :limit
-        """)
+        # Pgvector cosine similarity search using SQLAlchemy ORM for safety
+        # Convert excluded_ids to list for query
+        excluded_list = list(excluded_ids)
         
-        result = await db.execute(
-            similarity_query,
-            {
-                "user_vector": str(list(user.vibe_vector)),
-                "user_id": str(user_id),
-                "excluded_ids": [str(uid) for uid in excluded_ids],
-                "limit": limit * 2,  # Fetch extra for filtering
-            }
+        candidates_query = (
+            select(User.id, User.vibe_vector)
+            .where(
+                and_(
+                    User.id.notin_(excluded_list),
+                    User.vibe_vector.isnot(None),
+                )
+            )
+            .order_by(
+                User.vibe_vector.op("<->")(user.vibe_vector)
+            )
+            .limit(limit * 2)
         )
+        
+        result = await db.execute(candidates_query)
         
         candidates = result.fetchall()
         
         # Calculate full compatibility scores
         matches = []
-        for candidate_id, vibe_similarity in candidates:
+        for candidate_id, candidate_vector in candidates:
+            if not candidate_vector:
+                continue
+            
             candidate = await db.get(User, candidate_id)
             if not candidate or not candidate.vibe_vector:
                 continue

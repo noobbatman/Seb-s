@@ -95,7 +95,7 @@ export default function ProfilePage() {
   const { mutate: connectSpotify } = useMutation({
     mutationFn: async () => {
       const response = await spotifyApi.getAuthUrl();
-      window.location.href = response.data.url;
+      window.location.href = response.data.auth_url;
     },
   });
 
