@@ -1,9 +1,15 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
 
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
+    
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=False,
+        extra="ignore",
+    )
     
     # App
     app_name: str = "CultureMatch API"
@@ -29,10 +35,6 @@ class Settings(BaseSettings):
     # Vector Embedding Model
     embedding_model: str = "all-MiniLM-L6-v2"
     embedding_dimension: int = 384
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
 
 
 @lru_cache()
