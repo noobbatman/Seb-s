@@ -54,13 +54,17 @@ export default function ProfilePage() {
   // Add to top 4 mutation
   const { mutate: addToTop4 } = useMutation({
     mutationFn: async (item: MediaSearchResult) => {
+      const mediaData: any = {
+        external_id: item.id,
+        media_type: mediaType,
+        title: item.title || item.name || 'Unknown',
+      };
+      if (item.image_url) {
+        mediaData.image_url = item.image_url;
+      }
+      console.log('Adding to top 4:', { mediaData, item });
       const response = await mediaApi.logInteraction({
-        media: {
-          external_id: item.id,
-          media_type: mediaType,
-          title: item.title || item.name || 'Unknown',
-          image_url: item.image_url || undefined,
-        },
+        media: mediaData,
         interaction_type: 'top4',
       });
       return response.data;
@@ -68,6 +72,12 @@ export default function ProfilePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['interactions'] });
       setShowMediaModal(false);
+    },
+    onError: (error: any) => {
+      console.error('Error adding to top 4:', error);
+      if (error.response?.data) {
+        console.error('Response data:', error.response.data);
+      }
     },
   });
 

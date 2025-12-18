@@ -87,6 +87,12 @@ async def create_interaction(
 ):
     """Log a media interaction (rating, review, add to Top 4, etc.)."""
     
+    # Convert user_id to UUID
+    try:
+        user_uuid = UUID(user_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid user ID format")
+    
     # Find or create media item
     result = await db.execute(
         select(MediaItem).where(
@@ -110,7 +116,7 @@ async def create_interaction(
     # Check for existing interaction of same type
     result = await db.execute(
         select(UserInteraction).where(
-            UserInteraction.user_id == user_id,
+            UserInteraction.user_id == user_uuid,
             UserInteraction.media_id == media.id,
             UserInteraction.interaction_type == data.interaction_type,
         )
@@ -130,7 +136,7 @@ async def create_interaction(
                 select(UserInteraction)
                 .join(MediaItem)
                 .where(
-                    UserInteraction.user_id == user_id,
+                    UserInteraction.user_id == user_uuid,
                     UserInteraction.interaction_type == "top4",
                     MediaItem.media_type == data.media.media_type,
                 )
@@ -143,7 +149,7 @@ async def create_interaction(
                 )
         
         interaction = UserInteraction(
-            user_id=user_id,
+            user_id=user_uuid,
             media_id=media.id,
             interaction_type=data.interaction_type,
             rating=data.rating,
@@ -156,7 +162,7 @@ async def create_interaction(
     
     # Regenerate vibe vector for significant interactions (Top 4, anthem)
     if data.interaction_type in ("top4", "anthem"):
-        await update_user_vibe_vector(db, UUID(user_id))
+        await update_user_vibe_vector(db, user_uuid)
     
     # Eager load media for response
     await db.refresh(interaction, ["media"])

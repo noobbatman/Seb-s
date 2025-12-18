@@ -80,11 +80,14 @@ class VibeCheckSubmit(BaseModel):
 
 class MediaItemBase(BaseModel):
     """Base media item fields."""
-    external_id: str
+    external_id: str = Field(..., min_length=1)
     media_type: str = Field(..., pattern="^(movie|artist|track|album)$")
-    title: str
+    title: str = Field(..., min_length=1)
     image_url: Optional[str] = None
     extra_data: Optional[dict] = None
+    
+    class Config:
+        str_strip_whitespace = True
 
 
 class MediaItemCreate(MediaItemBase):

@@ -92,7 +92,22 @@ export const mediaApi = {
     interaction_type: string;
     rating?: number;
     review_text?: string;
-  }) => api.post('/media/interactions', data),
+  }) => {
+    // Filter out undefined values
+    const payload = {
+      media: {
+        external_id: data.media.external_id,
+        media_type: data.media.media_type,
+        title: data.media.title,
+        ...(data.media.image_url && { image_url: data.media.image_url }),
+        ...(data.media.extra_data && { extra_data: data.media.extra_data }),
+      },
+      interaction_type: data.interaction_type,
+      ...(data.rating !== undefined && { rating: data.rating }),
+      ...(data.review_text !== undefined && { review_text: data.review_text }),
+    };
+    return api.post('/media/interactions', payload);
+  },
   
   removeInteraction: (interactionId: string) =>
     api.delete(`/media/interactions/${interactionId}`),
