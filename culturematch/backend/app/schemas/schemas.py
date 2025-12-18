@@ -199,34 +199,3 @@ class MessageResponse(BaseModel):
     class Config:
         from_attributes = True
 
-
-# ============ Search Schemas ============
-
-class MovieSearchResult(BaseModel):
-    """TMDB movie search result."""
-    id: int
-    title: str
-    overview: Optional[str] = None
-    poster_path: Optional[str] = None
-    release_date: Optional[str] = None
-    vote_average: Optional[float] = None
-    genres: List[str] = []
-
-
-class ArtistSearchResult(BaseModel):
-    """Spotify artist search result."""
-    id: str
-    name: str
-    image_url: Optional[str] = None
-    genres: List[str] = []
-    popularity: Optional[int] = None
-
-
-class TrackSearchResult(BaseModel):
-    """Spotify track search result."""
-    id: str
-    name: str
-    artist: str
-    album: str
-    image_url: Optional[str] = None
-    preview_url: Optional[str] = None
