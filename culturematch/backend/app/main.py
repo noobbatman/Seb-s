@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="CultureMatch API",
     description="Dating app that matches users based on cultural compatibility - movies & music taste",
-    version="1.0.0",
+    version="1.0.1",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
