@@ -15,10 +15,17 @@ async def lifespan(app: FastAPI):
     # Startup: Initialize database and pre-load models
     print("🚀 Starting up CultureMatch API...")
     
-    # Initialize database tables
+    # Initialize database tables and extensions
     from app.core.database import engine
     from app.models.models import Base
+    from sqlalchemy import text
+    
     async with engine.begin() as conn:
+        # Enable pgvector extension
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+        print("✅ pgvector extension enabled!")
+        
+        # Create tables
         await conn.run_sync(Base.metadata.create_all)
     print("✅ Database tables initialized!")
     
