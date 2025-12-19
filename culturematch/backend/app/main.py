@@ -12,12 +12,23 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan handler for startup/shutdown."""
-    # Startup: Pre-load the embedding model
+    # Startup: Initialize database and pre-load models
+    print("🚀 Starting up CultureMatch API...")
+    
+    # Initialize database tables
+    from app.core.database import engine
+    from app.models.models import Base
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    print("✅ Database tables initialized!")
+    
+    # Pre-load the embedding model
     if not settings.debug:
         from app.services.vector import get_embedding_model
         print("🧠 Pre-loading embedding model...")
         get_embedding_model()
         print("✅ Embedding model loaded!")
+    
     yield
     # Shutdown: cleanup if needed
     print("👋 Shutting down CultureMatch API...")
