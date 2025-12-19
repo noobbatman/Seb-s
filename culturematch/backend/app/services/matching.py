@@ -78,7 +78,7 @@ class MatchingService:
         # Calculate full compatibility scores
         matches = []
         for candidate_id, candidate_vector in candidates:
-            if not candidate_vector:
+            if candidate_vector is None:
                 continue
             
             candidate = await db.get(User, candidate_id)
